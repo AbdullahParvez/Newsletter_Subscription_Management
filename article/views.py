@@ -111,19 +111,6 @@ def post_detail_view(request, pk=None, *args, **kwargs):
     return render(request, "article/post_detail.html", context)
 
 
-def list(request):
-    # list_post = Post.objects.get_post_with_rating()
-    list_post = Rating.objects.values('post_id__title').annotate(avgRating=Avg('rating')).order_by('post_id')
-    for l in list_post:
-        print(l['post_id__title'])
-
-    context = {
-        'object_list': list_post,
-        'count':0,
-    }
-
-    return render(request, 'article/list.html', context)
-
 @staff_member_required()
 def rating_list(request):
     list_post = Rating.objects.values('post_id__title').annotate(avgRating=Avg('rating')).order_by('post_id')

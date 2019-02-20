@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from article.views import CreatePostView, PostDetailView, PostListView, post_detail_view, list, rating_list
+from article.views import CreatePostView, PostDetailView, PostListView, post_detail_view, rating_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +25,5 @@ urlpatterns = [
     url(r'post/new/$',CreatePostView.as_view(), name='post_new'),
     #url(r'post/(?P<pk>\d+)$', PostDetailView.as_view(), name='post_detail'),
     url(r'post/(?P<pk>\d+)$', post_detail_view, name='post_detail'),
-    #url(r'list/$', list, name='list'),
     url(r'admin/rating/list/$', rating_list, name="post_rating_list"),
 ]
