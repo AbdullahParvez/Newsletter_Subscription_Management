@@ -1,0 +1,57 @@
+{% extends "newsletter_subscription_management/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ object.title }}</h1>
+        <p class="lead">
+            {{ object.text }}
+        </p>
+        <p>{{ object.published_date }}</p>
+
+{% if subscriber %}
+        <div id="sub">
+            <p>You are not a subscriber. For rating you need to subscribe first</p>
+            <form method="post">
+                {% csrf_token %}
+                <input name="type" type="hidden" value="subscribe">
+                <input name="subscribe" type="hidden" value="True">
+                Email: <input name="email" type="email">
+                <button type="submit" class="btn btn-submit">Subscribe</button>
+            </form>
+        </div>
+    {% elif unsubscribe %}
+        <div id="unsub">
+            <form method="post">
+                {% csrf_token %}
+                <input name="type" type="hidden" value="unsubscribe">
+                <input name="subscribe" type="hidden" value="False">
+                <input name="email" type="hidden" value="{{ email }}">
+                Rate: {{ rate }}
+                <button type="submit" class="btn btn-submit">Unsubscribe</button>
+            </form>
+        </div>
+    {% else %}
+     <button onclick="rateController()">Rate</button>
+        <div id="rat" style="display:none">
+            <form method="post">
+                {% csrf_token %}
+                <input name="type" type="hidden" value="rate">
+                <input name="post" type="hidden" value="{{ object.id }}">
+                {{ rating_form }}
+                <button type="submit" class="btn btn-submit">Submit</button>
+            </form>
+        </div>
+    {% endif %}
+
+    </div>
+
+    <script>
+        function rateController() {
+            var x = document.getElementById("rat");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            }
+        }
+
+    </script>
+{% endblock %}

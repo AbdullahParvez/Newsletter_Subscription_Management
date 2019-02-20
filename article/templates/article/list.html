@@ -1,0 +1,67 @@
+{% extends "newsletter_subscription_management/base.html" %}
+
+{% load space_to_underscore %}
+
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <table class="table">
+                <tr>
+                    <th>Post</th>
+                    <th>Average Rating</th>
+                </tr>
+
+                {% for obj in object_list %}
+                    <tr class={{ obj.post_id__title |space_to_underscore }} id={{ obj.post_id__title|space_to_underscore }}>
+                        <td>{{ obj.post_id__title}}</td>
+                        <td>
+                            <div class="stars-outer" id="stars-outer">
+                                <div class="stars-inner" id="stars-inner"></div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </table>
+        </div>
+    </div>
+
+
+    <script>
+        (function () {
+
+            const ratings = {
+            {% for obj in object_list %}
+                "{{ obj.post_id__title }}": "{{ obj.avgRating }}",
+
+            {% endfor %}
+            };
+            // total number of stars
+            const starTotal = 5;
+
+            for (const rating in ratings) {
+                var rat = rating
+                var i = 0, strLength = rat.length;
+
+                for (i; i < strLength; i++) {
+                    rat = rat.replace(" ", "_");
+                }
+
+                //console.log(ratings[rating])
+                const starPercentage = (ratings[rating] / starTotal) * 100;
+                const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
+
+                {#console.log(`.${rat}.stars-inner`);#}
+                document.querySelector(`.${rat} .stars-inner`).style.width = starPercentageRounded;
+
+                {#document.getElementById(rat).style.width = starPercentageRounded;#}
+            }
+
+        })();
+
+    </script>
+
+{% endblock %}
