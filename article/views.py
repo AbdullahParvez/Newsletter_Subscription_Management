@@ -6,9 +6,16 @@ from .form import PostForm, RatingForm
 from .models import Post, Subscriber, Rating
 from django.db.models import Avg, Sum
 from django.contrib.admin.views.decorators import staff_member_required
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 # Create your views here.
+
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
+
 
 
 class CreatePostView(CreateView):
@@ -23,6 +30,7 @@ class PostListView(ListView):
     model = Post
 
     template_name = "newsletter_subscription_management/index.html"
+
 
     def get_queryset(self):
         return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
@@ -112,6 +120,7 @@ def post_detail_view(request, pk=None, *args, **kwargs):
 
 
 @staff_member_required()
+@cache_page(CACHE_TTL)
 def rating_list(request):
     list_post = Rating.objects.values('post_id__title').annotate(avgRating=Avg('rating')).order_by('post_id')
     context = {
