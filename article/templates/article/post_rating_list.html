@@ -10,11 +10,11 @@
                 <table class="table" >
                     <tr>
                         <th style="font-size: 20px ;">Post</th>
-                        <th style="font-size: 20px ;">Average Rating</th>
+                        <th style="font-size: 20px ;">Average Rating Fow</th>
                     </tr>
 
                     {% for obj in object_list %}
-                        <tr class={{ obj.post_id__title |space_to_underscore }} id={{ obj.post_id__title|space_to_underscore }}>
+                        <tr class="post-view" id="{{ obj.post_id__title }}" rating="{{ obj.avgRating }}">
                             <td style="font-size: 20px ;">{{ obj.post_id__title }}</td>
                             <td style="font-size: 20px ;">
                                 <div class="stars-outer" id="stars-outer">
@@ -32,32 +32,16 @@
 
     <script>
         (function () {
-
-            const ratings = {
-                {% for obj in object_list %}
-                    "{{ obj.post_id__title }}": "{{ obj.avgRating }}",
-
-                {% endfor %}
-            };
             // total number of stars
             const starTotal = 5;
 
-            for (const rating in ratings) {
-                var rat = rating
-                var i = 0, strLength = rat.length;
+            const rows = document.getElementsByClassName('post-view');
 
-                for (i; i < strLength; i++) {
-                    rat = rat.replace(" ", "_");
-                }
-
-                //console.log(ratings[rating])
-                const starPercentage = (ratings[rating] / starTotal) * 100;
-                const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
-
-                {#console.log(`.${rat}.stars-inner`);#}
-                document.querySelector(`.${rat} .stars-inner`).style.width = starPercentageRounded;
-
-                {#document.getElementById(rat).style.width = starPercentageRounded;#}
+            for (var i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                var rating  = row.getAttribute('rating');
+                const starPercentage = Math.round((rating / starTotal) * 100);
+                row.querySelector('.stars-inner').style.width = `${starPercentage}%`;
             }
 
         })();

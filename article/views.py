@@ -120,7 +120,6 @@ def post_detail_view(request, pk=None, *args, **kwargs):
 
 
 @staff_member_required()
-@cache_page(CACHE_TTL)
 def rating_list(request):
     list_post = Rating.objects.values('post_id__title').annotate(avgRating=Avg('rating')).order_by('post_id')
     context = {
