@@ -1,13 +1,13 @@
 # Newsletter_Subscription_Management
 
-###Features
+### Features
 * Python 3.7
 * Django 2.1.5
 * PostgreSQL database support with psycopg2 2.7.7.
 * Caching with django-redis 4.10.0
 
 
-###Running the project
+### Running the project
 * Open a command line window and go to the project's directory.
 * Create a new virtual environment
 * Install the required tools using pip.
