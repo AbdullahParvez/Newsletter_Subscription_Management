@@ -1,15 +1,51 @@
 {% extends "newsletter_subscription_management/base.html" %}
+{% load cache %}
 
+{% cache 500 content %}
 {% block content %}
     <div class="centerstage">
-        {% for post in post_list %}
+        {% for post in rating_list %}
             <div class="post">
-                <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-                <div class="date">
-                    <p>Published on: {{ post.published_date|date:"D M Y"}}</p>
+                <h1><a href="{% url 'article:post_detail' pk=post.post_id__id %}">{{ post.post_id__title }}</a></h1>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="post-view" rating="{{ post.avgRating }}">
+                            <div class=" stars-outer" id="stars-outer">
+                                <div class="stars-inner" id="stars-inner">{{ post.avgRating }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        &nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="date">
+                            <p>Published on: {{ post.post_id__published_date|date:"D M Y" }}</p>
+                        </div>
+                    </div>
                 </div>
-                <a href="{% url 'post_detail' pk=post.pk %}"></a>
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        (function () {
+
+            // total number of stars
+            const starTotal = 5;
+
+            const rows = document.getElementsByClassName('post-view');
+
+            for (var i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                var rating = row.getAttribute('rating');
+                const starPercentage = Math.round((rating / starTotal) * 100);
+                row.querySelector('.stars-inner').style.width = `${starPercentage}%`;
+            }
+
+        })();
+
+    </script>
+
 {% endblock %}
+{% endcache %}

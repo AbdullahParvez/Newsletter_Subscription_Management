@@ -24,3 +24,7 @@ class RatingForm(forms.Form):
     )
     email = forms.EmailField()
     rating = forms.ChoiceField(choices=RATING_CHOICES)
+
+
+class SubscriberForm(forms.Form):
+    email = forms.EmailField()

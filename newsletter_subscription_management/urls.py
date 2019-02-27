@@ -16,18 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from article.views import CreatePostView, PostDetailView, PostListView, post_detail_view, rating_list, index
+from article.views import CreatePostView,post_list_view, PostListView
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     #url(r'^$',index, name='home'),
-    url(r'^$', PostListView.as_view(), name='home'),
-    url(r'post/new/$',CreatePostView.as_view(), name='post_new'),
+    # url(r'^$', PostListView.as_view(), name='home'),
+    url(r'^$', post_list_view, name='home'),
+    url(r'^post/new/$',CreatePostView.as_view(), name='post_new'),
+    url(r'^article/', include(("article.urls", 'article'), namespace='article')),
     #url(r'post/(?P<pk>\d+)$', PostDetailView.as_view(), name='post_detail'),
-    url(r'post/(?P<pk>\d+)$', post_detail_view, name='post_detail'),
-    url(r'admin/rating/list/$', rating_list, name="post_rating_list"),
 ]
 
 

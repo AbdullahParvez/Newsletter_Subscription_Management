@@ -35,7 +35,7 @@ class SubscriberManager(models.Manager):
 
 
 class Subscriber(models.Model):
-    email = models.EmailField(max_length=120)
+    email = models.EmailField(max_length=120,unique=True)
     subscribe = models.BooleanField(default=False)
 
     objects = SubscriberManager()
@@ -44,10 +44,20 @@ class Subscriber(models.Model):
         return self.email
 
 
+class RatingManager(models.Manager):
+    def get_by_id(self, id):
+        qs = self.get_queryset().filter(id=id)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+
 class Rating(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     user_id = models.ForeignKey(Subscriber, on_delete=models.CASCADE)
     rating = models.DecimalField(max_digits=2, decimal_places=1)
+
+    objects = RatingManager()
 
     class Meta:
         unique_together = ('post_id', 'user_id',)

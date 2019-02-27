@@ -1,0 +1,13 @@
+{% extends "newsletter_subscription_management/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3>Subscribe</h3>
+        <p>You are not a subscriber. For rating you need to subscribe first</p>
+        <form method="post">
+            {% csrf_token %}
+            Email: <input name="email" type="email">
+            <button type="submit" class="btn btn-submit">Subscribe</button>
+        </form>
+    </div>
+{% endblock %}

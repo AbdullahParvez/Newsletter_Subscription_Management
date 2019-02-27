@@ -33,12 +33,12 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url "home" %}">Home <span class="sr-only">(current)</span></a>
                 </li>
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url "post_new" %}">New Post</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url "post_rating_list" %}">Average Rating</a>
+                        <a class="nav-link" href="{% url "article:post_rating_list" %}">Average Rating</a>
                     </li>
                 {% endif %}
             </ul>

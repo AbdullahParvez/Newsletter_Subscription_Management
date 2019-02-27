@@ -1,0 +1,50 @@
+{% extends "newsletter_subscription_management/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ object.title }}</h1>
+        <p class="lead">
+            {{ object.text }}
+        </p>
+        <p>{{ object.published_date }}</p>
+        <diV class="rating" id="rating">
+                    <div class="stars-outer" id="stars-outer">
+                        <div class="stars-inner" id="stars-inner"></div>
+                    </div>
+        </diV>
+        <div>
+            <form method="post" action="{% url 'article:unsubscribe' %}">
+                {% csrf_token %}
+                <input name="email" type="hidden" value="{{ email }}">
+
+                <button type="submit" class="btn btn-submit">Unsubscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        (function () {
+
+            // total number of stars
+            const starTotal = 5;
+
+            console.log({{ rate }})
+
+            var rate = "{{ rate  }}";
+            //console.log(ratings[rating])
+            const starPercentage = (rate / starTotal) * 100;
+            const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
+
+            var element = document.querySelector(`.rating .stars-inner`);
+            if (element) {
+                element.style.width = starPercentageRounded;
+            }
+
+            {#document.getElementById(rat).style.width = starPercentageRounded;#}
+
+
+        })();
+        </script>
+
+{% endblock %}
