@@ -54,7 +54,7 @@ class RatingManager(models.Manager):
 
 class Rating(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(Subscriber, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(Subscriber, on_delete=models.CASCADE, null=True)
     rating = models.DecimalField(max_digits=2, decimal_places=1)
 
     objects = RatingManager()

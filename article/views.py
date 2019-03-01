@@ -11,6 +11,8 @@ from django.conf import settings
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from .services import get_avg_rating_with_cache as get_avg_ratings
+from django.core.cache import cache
 
 
 # Create your views here.
@@ -22,26 +24,20 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 class CreatePostView(CreateView):
     form_class = PostForm
     model = Post
+    cache.delete('ratings')
 
     def get_success_url(self):
+        rating = Rating()
+        rating.post_id = Post.objects.get(pk=self.object.pk)
+        rating.rating = 0
+        rating.save()
         return reverse('home')
 
-
-class PostListView(ListView):
-    model = Rating
-
-    template_name = "newsletter_subscription_management/index.html"
-
-    @cache_page(CACHE_TTL)
-    def get_queryset(self):
-        return Rating.objects.values('post_id__id','post_id__title','post_id__published_date').annotate(avgRating=Avg('rating')).order_by('post_id')
-
-
-# @cache_page(CACHE_TTL)
+#@cache_page(CACHE_TTL)
 def post_list_view(request):
-    instance = Rating.objects.values('post_id__id','post_id__title','post_id__published_date').annotate(avgRating=Avg('rating')).order_by('post_id')
+    #instance = Rating.objects.values('post_id__id','post_id__title','post_id__published_date').annotate(avgRating=Avg('rating')).order_by('post_id')
     context = {
-        'rating_list':instance
+        'rating_list':get_avg_ratings()
     }
     return render(request, 'newsletter_subscription_management/index.html', context)
 
@@ -85,14 +81,16 @@ def rate(request):
 
         else:
             rating = Rating()
-            rating.post_id = post_id
+            post = Post.objects.get(pk=post_id)
+            rating.post_id = post
             rating.user_id = user_id
             rating.rating = request.POST.get('rating')
+            cache.delete('ratings')
             rating.save()
             rate = request.POST.get('rating')
             email = request.POST.get('email')
             context = {
-                'object': post_id,
+                'object': post,
                 'rate': rate,
                 'email': email,
             }
@@ -105,6 +103,7 @@ def update_rate(request):
         user_id = Subscriber.objects.get_by_email(request.POST.get('email'))
         object = Rating.objects.get(post_id=post_id, user_id=user_id)
         object.rating = request.POST.get('rating')
+        cache.delete('ratings')
         object.save()
         return redirect('home')
 
@@ -113,6 +112,7 @@ def update_rate(request):
 def unsunscribe(request):
     if request.method == 'POST':
         subscriber = Subscriber.objects.get_by_email(request.POST.get('email'))
+        cache.delete('ratings')
         subscriber.delete()
     return render(request, "article/unsubscribe_success.html")
 
@@ -126,6 +126,7 @@ def subscribe(request):
         subscriber = Subscriber()
         subscriber.email = request.POST.get('email')
         subscriber.subscribe = True
+        cache.delete('ratings')
         subscriber.save()
         return redirect("home")
     return render(request, "article/subscribe.html", context)
@@ -160,4 +161,15 @@ def rating_list(request):
 # def index(request):
 #     print("User is superuser; " + str(request.user.is_superuser))
 #     return render(request, 'newsletter_subscription_management/index.html', {})
+
+
+#
+# class PostListView(ListView):
+#     model = Rating
+#
+#     template_name = "newsletter_subscription_management/index.html"
+#
+#     @cache_page(CACHE_TTL)
+#     def get_queryset(self):
+#         return Rating.objects.values('post_id__id','post_id__title','post_id__published_date').annotate(avgRating=Avg('rating')).order_by('post_id')
 
